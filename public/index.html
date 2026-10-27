@@ -1,0 +1,791 @@
+<!DOCTYPE html>
+<html lang="es" class="scroll-smooth dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Valeria Ríos | Portafolio de Arte</title>
+    
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        brand: {
+                            50: '#faf8f5',
+                            100: '#f4efe6',
+                            500: '#c59b27',
+                            600: '#b0841a',
+                            900: '#1c1917'
+                        }
+                    },
+                    fontFamily: {
+                        serif: ['Playfair Display', 'serif'],
+                        sans: ['Inter', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+
+    <!-- Google Fonts & Font Awesome Icons -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,500;0,600;0,700;1,400&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <style>
+        /* Animación suave para gradiente Hero */
+        @keyframes gradientShift {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        .animated-gradient {
+            background-size: 200% 200%;
+            animation: gradientShift 15s ease infinite;
+        }
+
+        /* Ocultar barra de desplazamiento manteniendo funcionalidad */
+        .no-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+        .no-scrollbar {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+    </style>
+</head>
+<body class="bg-stone-50 text-stone-800 dark:bg-zinc-950 dark:text-stone-100 font-sans transition-colors duration-300 min-h-screen flex flex-col">
+
+    <!-- Toast Notification (Notificaciones Flotantes) -->
+    <div id="toast" class="fixed bottom-5 right-5 z-50 transform translate-y-20 opacity-0 transition-all duration-300 bg-zinc-900 text-white dark:bg-stone-100 dark:text-zinc-900 px-5 py-3 rounded-xl shadow-2xl flex items-center space-x-3 border border-stone-700 dark:border-stone-300 pointer-events-none">
+        <i id="toast-icon" class="fas fa-check-circle text-amber-500"></i>
+        <span id="toast-msg" class="text-sm font-medium">Notificación</span>
+    </div>
+
+    <!-- HEADER / NAVEGACIÓN -->
+    <header class="sticky top-0 z-40 w-full backdrop-blur-md bg-stone-50/80 dark:bg-zinc-950/80 border-b border-stone-200 dark:border-zinc-800 transition-colors duration-300">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between">
+            
+            <!-- Logo / Nombre del Artista -->
+            <a href="#" class="group flex items-center gap-2">
+                <span class="font-serif text-2xl font-bold tracking-tight text-zinc-900 dark:text-stone-100 group-hover:text-amber-600 dark:group-hover:text-amber-400 transition-colors">
+                    Valeria Ríos
+                </span>
+                <span class="text-xs tracking-widest text-amber-600 dark:text-amber-400 uppercase font-semibold border-l border-stone-300 dark:border-zinc-700 pl-2">
+                    Estudio de Arte
+                </span>
+            </a>
+
+            <!-- Navegación Desktop -->
+            <nav class="hidden md:flex items-center space-x-8 text-sm font-medium">
+                <a href="#galeria" class="hover:text-amber-600 dark:hover:text-amber-400 transition-colors">Galería</a>
+                <a href="#sobre-mi" class="hover:text-amber-600 dark:hover:text-amber-400 transition-colors">Sobre la Artista</a>
+                <a href="#exposiciones" class="hover:text-amber-600 dark:hover:text-amber-400 transition-colors">Trayectoria</a>
+                <a href="#contacto" class="hover:text-amber-600 dark:hover:text-amber-400 transition-colors">Contacto</a>
+            </nav>
+
+            <!-- Acciones y Selector de Tema -->
+            <div class="flex items-center space-x-4">
+                <!-- Botón Modo Claro / Oscuro -->
+                <button id="theme-toggle" aria-label="Cambiar Tema" class="p-2.5 rounded-full bg-stone-200 dark:bg-zinc-800 text-stone-700 dark:text-stone-300 hover:bg-stone-300 dark:hover:bg-zinc-700 transition-all focus:outline-none focus:ring-2 focus:ring-amber-500">
+                    <i id="theme-toggle-dark-icon" class="fas fa-moon hidden text-base"></i>
+                    <i id="theme-toggle-light-icon" class="fas fa-sun hidden text-base text-amber-400"></i>
+                </button>
+
+                <!-- Botón Menú Móvil -->
+                <button id="mobile-menu-btn" aria-label="Abrir Menú" class="md:hidden p-2 rounded-lg text-stone-700 dark:text-stone-300 hover:bg-stone-200 dark:hover:bg-zinc-800 focus:outline-none">
+                    <i class="fas fa-bars text-xl"></i>
+                </button>
+            </div>
+        </div>
+
+        <!-- Menú Desplegable Móvil -->
+        <div id="mobile-menu" class="hidden md:hidden border-b border-stone-200 dark:border-zinc-800 bg-stone-50 dark:bg-zinc-950 px-4 pt-2 pb-6 space-y-3">
+            <a href="#galeria" class="mobile-link block px-3 py-2 rounded-md hover:bg-stone-200 dark:hover:bg-zinc-800 font-medium">Galería</a>
+            <a href="#sobre-mi" class="mobile-link block px-3 py-2 rounded-md hover:bg-stone-200 dark:hover:bg-zinc-800 font-medium">Sobre la Artista</a>
+            <a href="#exposiciones" class="mobile-link block px-3 py-2 rounded-md hover:bg-stone-200 dark:hover:bg-zinc-800 font-medium">Trayectoria</a>
+            <a href="#contacto" class="mobile-link block px-3 py-2 rounded-md hover:bg-stone-200 dark:hover:bg-zinc-800 font-medium">Contacto</a>
+        </div>
+    </header>
+
+    <main class="flex-grow">
+        <!-- SECCIÓN HERO -->
+        <section class="relative min-h-[85vh] flex items-center justify-center overflow-hidden py-20 px-4 sm:px-6 lg:px-8">
+            <!-- Fondo Animado Elegante -->
+            <div class="absolute inset-0 z-0 opacity-40 dark:opacity-20 animated-gradient bg-gradient-to-br from-amber-200 via-stone-300 to-amber-100 dark:from-zinc-900 dark:via-amber-950 dark:to-zinc-900"></div>
+            
+            <div class="relative z-10 max-w-4xl mx-auto text-center space-y-8">
+                <span class="inline-block px-4 py-1.5 rounded-full text-xs font-semibold tracking-wider uppercase bg-amber-500/10 text-amber-700 dark:text-amber-400 border border-amber-500/20">
+                    Obras Contemporáneas & Expresionismo
+                </span>
+                
+                <h1 class="font-serif text-4xl sm:text-6xl lg:text-7xl font-extrabold tracking-tight text-zinc-900 dark:text-stone-50 leading-tight">
+                    Donde la emoción cobra forma y el color cobra vida
+                </h1>
+                
+                <p class="text-lg sm:text-xl text-stone-600 dark:text-stone-300 max-w-2xl mx-auto font-light italic">
+                    "El arte no reproduce lo visible; más bien, hace visible lo insondable de la experiencia humana."
+                </p>
+
+                <div class="pt-4 flex flex-col sm:flex-row items-center justify-center gap-4">
+                    <a href="#galeria" class="w-full sm:w-auto px-8 py-4 rounded-full bg-zinc-900 hover:bg-zinc-800 text-white dark:bg-amber-500 dark:hover:bg-amber-400 dark:text-zinc-950 font-semibold shadow-lg hover:shadow-xl transition-all transform hover:-translate-y-0.5 text-center">
+                        Explorar Galería <i class="fas fa-arrow-right ml-2 text-sm"></i>
+                    </a>
+                    <a href="#contacto" class="w-full sm:w-auto px-8 py-4 rounded-full border border-stone-400 dark:border-zinc-700 hover:bg-stone-200/50 dark:hover:bg-zinc-800/50 font-medium transition-all text-center">
+                        Encargar Obra
+                    </a>
+                </div>
+            </div>
+        </section>
+
+        <!-- SECCIÓN GALERÍA DE ARTE -->
+        <section id="galeria" class="py-20 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center max-w-2xl mx-auto mb-12">
+                <h2 class="font-serif text-3xl sm:text-4xl font-bold mb-4">Colección de Obras</h2>
+                <p class="text-stone-600 dark:text-stone-400">
+                    Filtra por disciplina artística o busca por título o técnica. Haz clic en cualquier obra para ver detalles ampliados.
+                </p>
+            </div>
+
+            <!-- Controles: Buscador y Filtros -->
+            <div class="mb-10 space-y-6">
+                <!-- Barra de búsqueda -->
+                <div class="max-w-md mx-auto relative">
+                    <i class="fas fa-search absolute left-4 top-1/2 -translate-y-1/2 text-stone-400"></i>
+                    <input type="text" id="search-input" placeholder="Buscar por título, categoría o técnica..." 
+                           class="w-full pl-11 pr-4 py-3 rounded-full bg-stone-100 dark:bg-zinc-900 border border-stone-300 dark:border-zinc-800 focus:outline-none focus:ring-2 focus:ring-amber-500 text-sm transition-all shadow-sm">
+                </div>
+
+                <!-- Botones de Filtro -->
+                <div class="flex items-center justify-center flex-wrap gap-2 sm:gap-3 no-scrollbar overflow-x-auto py-2">
+                    <button class="filter-btn active px-5 py-2.5 rounded-full text-sm font-medium transition-all bg-zinc-900 text-white dark:bg-stone-100 dark:text-zinc-900 shadow-md" data-category="all">
+                        Todas
+                    </button>
+                    <button class="filter-btn px-5 py-2.5 rounded-full text-sm font-medium transition-all bg-stone-200 text-stone-700 hover:bg-stone-300 dark:bg-zinc-800 dark:text-stone-300 dark:hover:bg-zinc-700" data-category="Pinturas">
+                        Pinturas
+                    </button>
+                    <button class="filter-btn px-5 py-2.5 rounded-full text-sm font-medium transition-all bg-stone-200 text-stone-700 hover:bg-stone-300 dark:bg-zinc-800 dark:text-stone-300 dark:hover:bg-zinc-700" data-category="Ilustración Digital">
+                        Ilustración Digital
+                    </button>
+                    <button class="filter-btn px-5 py-2.5 rounded-full text-sm font-medium transition-all bg-stone-200 text-stone-700 hover:bg-stone-300 dark:bg-zinc-800 dark:text-stone-300 dark:hover:bg-zinc-700" data-category="Esculturas">
+                        Esculturas
+                    </button>
+                    <button class="filter-btn px-5 py-2.5 rounded-full text-sm font-medium transition-all bg-stone-200 text-stone-700 hover:bg-stone-300 dark:bg-zinc-800 dark:text-stone-300 dark:hover:bg-zinc-700" data-category="Fotografía">
+                        Fotografía
+                    </button>
+                </div>
+            </div>
+
+            <!-- Grid de Galería -->
+            <div id="gallery-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 sm:gap-8">
+                <!-- Las tarjetas de arte se generan dinámicamente con JS -->
+            </div>
+
+            <!-- Mensaje cuando no hay resultados -->
+            <div id="no-results" class="hidden text-center py-16">
+                <i class="fas fa-palette text-5xl text-stone-300 dark:text-zinc-700 mb-4"></i>
+                <p class="text-lg font-medium text-stone-500">No se encontraron obras que coincidan con la búsqueda.</p>
+            </div>
+        </section>
+
+        <!-- SECCIÓN SOBRE EL ARTISTA -->
+        <section id="sobre-mi" class="py-20 bg-stone-100 dark:bg-zinc-900/50 border-y border-stone-200 dark:border-zinc-800 transition-colors">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
+                    
+                    <!-- Foto de Perfil -->
+                    <div class="lg:col-span-5 relative">
+                        <div class="relative mx-auto max-w-md lg:max-w-none rounded-2xl overflow-hidden shadow-2xl border-4 border-white dark:border-zinc-800">
+                            <img src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=800&q=80" alt="Valeria Ríos Artista" class="w-full h-auto object-cover aspect-[4/5] hover:scale-105 transition-transform duration-500">
+                        </div>
+                        <div class="absolute -bottom-6 -right-6 hidden sm:block bg-amber-500 text-zinc-950 p-6 rounded-2xl shadow-xl max-w-xs">
+                            <p class="font-serif font-bold text-2xl">12+ Años</p>
+                            <p class="text-xs uppercase tracking-wider font-semibold">De experiencia en artes plásticas y visuales</p>
+                        </div>
+                    </div>
+
+                    <!-- Información y Biografía -->
+                    <div class="lg:col-span-7 space-y-6">
+                        <span class="text-amber-600 dark:text-amber-400 font-semibold tracking-wider text-sm uppercase">Biografía</span>
+                        <h2 class="font-serif text-3xl sm:text-4xl font-bold text-zinc-900 dark:text-stone-100">
+                            Valeria Ríos
+                        </h2>
+                        
+                        <p class="text-stone-600 dark:text-stone-300 leading-relaxed">
+                            Nacida en la Ciudad de México y radicada en Barcelona, Valeria Ríos ha explorado las intersecciones entre la memoria afectiva, el paisaje urbano y el expresionismo abstracto a lo largo de más de una década. Con formación en Bellas Artes por la Universidad de Barcelona y estudios de diseño digital en Berlín, su obra transita con soltura entre el lienzo al óleo y la escultura en medios mixtos.
+                        </p>
+
+                        <!-- Statement del Artista -->
+                        <div class="p-6 rounded-2xl bg-stone-200/60 dark:bg-zinc-800/60 border-l-4 border-amber-500 italic text-stone-700 dark:text-stone-200">
+                            "Busco materializar la fragilidad del tiempo. Cada trazo, escultura o fotografía en mi obra es un intento de pausar el caos cotidiano para ofrecer al espectador un espacio de contemplación y auto-descubrimiento."
+                        </div>
+
+                        <!-- Logros y Exposiciones -->
+                        <div id="exposiciones" class="pt-4 space-y-4">
+                            <h3 class="font-serif text-xl font-semibold text-zinc-900 dark:text-stone-100">Exposiciones Destacadas</h3>
+                            <ul class="space-y-3">
+                                <li class="flex items-start space-x-3">
+                                    <i class="fas fa-award text-amber-500 mt-1"></i>
+                                    <div>
+                                        <strong class="text-zinc-900 dark:text-stone-100">2025:</strong> <em>"Ecos de Luz"</em> - Galería Vanguardia, Madrid (Individual)
+                                    </div>
+                                </li>
+                                <li class="flex items-start space-x-3">
+                                    <i class="fas fa-award text-amber-500 mt-1"></i>
+                                    <div>
+                                        <strong class="text-zinc-900 dark:text-stone-100">2023:</strong> Bienal de Arte Contemporáneo, Pabellón de Arte, París (Colectiva)
+                                    </div>
+                                </li>
+                                <li class="flex items-start space-x-3">
+                                    <i class="fas fa-award text-amber-500 mt-1"></i>
+                                    <div>
+                                        <strong class="text-zinc-900 dark:text-stone-100">2021:</strong> Premio Nacional de Ilustración y Artes Visuales (Primer Lugar)
+                                    </div>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </section>
+
+        <!-- SECCIÓN DE CONTACTO -->
+        <section id="contacto" class="py-20 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-12">
+                
+                <!-- Datos de Contacto y Redes -->
+                <div class="lg:col-span-5 space-y-8">
+                    <div>
+                        <span class="text-amber-600 dark:text-amber-400 font-semibold tracking-wider text-sm uppercase">Ponte en contacto</span>
+                        <h2 class="font-serif text-3xl sm:text-4xl font-bold mt-2">Iniciemos un proyecto juntos</h2>
+                        <p class="text-stone-600 dark:text-stone-400 mt-4 leading-relaxed">
+                            ¿Interesado en adquirir alguna obra original, solicitar una comisión personalizada o colaborar en una exposición? Completa el formulario o contáctame directamente.
+                        </p>
+                    </div>
+
+                    <div class="space-y-4">
+                        <div class="flex items-center space-x-4">
+                            <div class="w-12 h-12 rounded-full bg-stone-200 dark:bg-zinc-800 flex items-center justify-center text-amber-500">
+                                <i class="fas fa-envelope text-lg"></i>
+                            </div>
+                            <div>
+                                <p class="text-xs text-stone-500 uppercase tracking-wider">Correo Electrónico</p>
+                                <p class="font-medium">contacto@valeriariosart.com</p>
+                            </div>
+                        </div>
+
+                        <div class="flex items-center space-x-4">
+                            <div class="w-12 h-12 rounded-full bg-stone-200 dark:bg-zinc-800 flex items-center justify-center text-amber-500">
+                                <i class="fas fa-map-marker-alt text-lg"></i>
+                            </div>
+                            <div>
+                                <p class="text-xs text-stone-500 uppercase tracking-wider">Ubicación</p>
+                                <p class="font-medium">Barcelona, España & CDMX</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Enlaces Redes Sociales -->
+                    <div class="pt-4">
+                        <p class="text-sm font-semibold mb-3">Sígueme en redes sociales</p>
+                        <div class="flex space-x-3">
+                            <a href="#" aria-label="Instagram" class="w-10 h-10 rounded-full bg-stone-200 dark:bg-zinc-800 flex items-center justify-center hover:bg-amber-500 hover:text-zinc-950 transition-colors">
+                                <i class="fab fa-instagram"></i>
+                            </a>
+                            <a href="#" aria-label="Behance" class="w-10 h-10 rounded-full bg-stone-200 dark:bg-zinc-800 flex items-center justify-center hover:bg-amber-500 hover:text-zinc-950 transition-colors">
+                                <i class="fab fa-behance"></i>
+                            </a>
+                            <a href="#" aria-label="ArtStation" class="w-10 h-10 rounded-full bg-stone-200 dark:bg-zinc-800 flex items-center justify-center hover:bg-amber-500 hover:text-zinc-950 transition-colors">
+                                <i class="fab fa-artstation"></i>
+                            </a>
+                            <a href="#" aria-label="Twitter / X" class="w-10 h-10 rounded-full bg-stone-200 dark:bg-zinc-800 flex items-center justify-center hover:bg-amber-500 hover:text-zinc-950 transition-colors">
+                                <i class="fab fa-x-twitter"></i>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Formulario de Contacto -->
+                <div class="lg:col-span-7">
+                    <form id="contact-form" class="bg-stone-100 dark:bg-zinc-900 p-8 rounded-3xl border border-stone-200 dark:border-zinc-800 shadow-xl space-y-6">
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                            <div>
+                                <label for="nombre" class="block text-sm font-medium mb-2">Nombre Completo *</label>
+                                <input type="text" id="nombre" required placeholder="Tu nombre" 
+                                       class="w-full px-4 py-3 rounded-xl bg-stone-50 dark:bg-zinc-950 border border-stone-300 dark:border-zinc-800 focus:outline-none focus:ring-2 focus:ring-amber-500 transition-all text-sm">
+                            </div>
+                            <div>
+                                <label for="email" class="block text-sm font-medium mb-2">Correo Electrónico *</label>
+                                <input type="email" id="email" required placeholder="tu@email.com" 
+                                       class="w-full px-4 py-3 rounded-xl bg-stone-50 dark:bg-zinc-950 border border-stone-300 dark:border-zinc-800 focus:outline-none focus:ring-2 focus:ring-amber-500 transition-all text-sm">
+                            </div>
+                        </div>
+
+                        <div>
+                            <label for="asunto" class="block text-sm font-medium mb-2">Asunto / Tipo de Consulta</label>
+                            <input type="text" id="asunto" placeholder="Ej. Adquisición de obra, Comisión..." 
+                                   class="w-full px-4 py-3 rounded-xl bg-stone-50 dark:bg-zinc-950 border border-stone-300 dark:border-zinc-800 focus:outline-none focus:ring-2 focus:ring-amber-500 transition-all text-sm">
+                        </div>
+
+                        <div>
+                            <label for="mensaje" class="block text-sm font-medium mb-2">Mensaje *</label>
+                            <textarea id="mensaje" rows="5" required placeholder="Cuéntame sobre tu proyecto o consulta..." 
+                                      class="w-full px-4 py-3 rounded-xl bg-stone-50 dark:bg-zinc-950 border border-stone-300 dark:border-zinc-800 focus:outline-none focus:ring-2 focus:ring-amber-500 transition-all text-sm resize-none"></textarea>
+                        </div>
+
+                        <button type="submit" class="w-full py-4 rounded-xl bg-zinc-900 hover:bg-zinc-800 text-white dark:bg-amber-500 dark:hover:bg-amber-400 dark:text-zinc-950 font-semibold shadow-lg hover:shadow-xl transition-all">
+                            Enviar Mensaje <i class="fas fa-paper-plane ml-2"></i>
+                        </button>
+                    </form>
+                </div>
+
+            </div>
+        </section>
+    </main>
+
+    <!-- VISOR MODAL (LIGHTBOX) DE ARTES -->
+    <div id="art-modal" class="fixed inset-0 z-50 hidden flex items-center justify-center p-4 sm:p-6 lg:p-8 bg-zinc-950/80 backdrop-blur-md transition-opacity duration-300 opacity-0">
+        <div class="relative w-full max-w-5xl bg-stone-50 dark:bg-zinc-900 rounded-3xl overflow-hidden shadow-2xl border border-stone-200 dark:border-zinc-800 my-8 max-h-[90vh] flex flex-col md:flex-row transform scale-95 transition-transform duration-300" id="modal-container">
+            
+            <!-- Botón Cerrar -->
+            <button id="modal-close" aria-label="Cerrar ventana" class="absolute top-4 right-4 z-20 w-10 h-10 rounded-full bg-stone-900/60 text-white hover:bg-stone-900 flex items-center justify-center transition-colors">
+                <i class="fas fa-times text-lg"></i>
+            </button>
+
+            <!-- Imagen Ampliada -->
+            <div class="md:w-1/2 bg-black flex items-center justify-center overflow-hidden min-h-[280px] max-h-[400px] md:max-h-none">
+                <img id="modal-image" src="" alt="" class="w-full h-full object-contain">
+            </div>
+
+            <!-- Detalles de la Obra -->
+            <div class="md:w-1/2 p-6 sm:p-8 flex flex-col justify-between overflow-y-auto max-h-[60vh] md:max-h-[85vh]">
+                <div class="space-y-4">
+                    <div class="flex items-center justify-between">
+                        <span id="modal-category" class="px-3 py-1 rounded-full text-xs font-semibold bg-amber-500/10 text-amber-600 dark:text-amber-400 border border-amber-500/20">
+                            Categoría
+                        </span>
+                        <span id="modal-year" class="text-sm font-medium text-stone-500">2024</span>
+                    </div>
+
+                    <h3 id="modal-title" class="font-serif text-2xl sm:text-3xl font-bold text-zinc-900 dark:text-stone-100">
+                        Título de la Obra
+                    </h3>
+
+                    <div class="grid grid-cols-2 gap-4 py-3 border-y border-stone-200 dark:border-zinc-800 text-sm">
+                        <div>
+                            <span class="block text-xs text-stone-500 uppercase">Técnica</span>
+                            <strong id="modal-technique" class="font-medium">Óleo sobre lienzo</strong>
+                        </div>
+                        <div>
+                            <span class="block text-xs text-stone-500 uppercase">Dimensiones</span>
+                            <strong id="modal-dimensions" class="font-medium">120 x 90 cm</strong>
+                        </div>
+                    </div>
+
+                    <p id="modal-description" class="text-sm leading-relaxed text-stone-600 dark:text-stone-300">
+                        Descripción detallada de la obra de arte.
+                    </p>
+                </div>
+
+                <div class="pt-6 border-t border-stone-200 dark:border-zinc-800 mt-6 flex items-center justify-between gap-4">
+                    <button id="modal-inquire-btn" class="flex-grow py-3 px-6 rounded-xl bg-amber-500 hover:bg-amber-400 text-zinc-950 font-semibold text-center transition-colors text-sm">
+                        Solicitar Cotización / Compra
+                    </button>
+                    <button id="modal-fav-btn" class="p-3 rounded-xl border border-stone-300 dark:border-zinc-700 hover:bg-stone-200 dark:hover:bg-zinc-800 text-stone-600 dark:text-stone-300 transition-colors">
+                        <i class="far fa-heart text-lg"></i>
+                    </button>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- PIE DE PÁGINA (FOOTER) -->
+    <footer class="bg-stone-200 dark:bg-zinc-950 border-t border-stone-300 dark:border-zinc-900 py-10 transition-colors">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col md:flex-row items-center justify-between gap-4">
+            <div class="text-center md:text-left">
+                <span class="font-serif font-bold text-lg">Valeria Ríos</span>
+                <p class="text-xs text-stone-500 dark:text-stone-400 mt-1">© 2026 Todos los derechos reservados. Arte Contemporáneo.</p>
+            </div>
+
+            <div class="flex items-center space-x-6 text-sm text-stone-600 dark:text-stone-400">
+                <a href="#galeria" class="hover:text-amber-500 transition-colors">Galería</a>
+                <a href="#sobre-mi" class="hover:text-amber-500 transition-colors">Artista</a>
+                <a href="#contacto" class="hover:text-amber-500 transition-colors">Contacto</a>
+            </div>
+
+            <button id="scroll-to-top" aria-label="Volver arriba" class="p-3 rounded-full bg-stone-300 dark:bg-zinc-800 hover:bg-amber-500 hover:text-zinc-950 transition-all">
+                <i class="fas fa-arrow-up text-sm"></i>
+            </button>
+        </div>
+    </footer>
+
+    <!-- JAVASCRIPT VANILLA -->
+    <script>
+        // ==========================================
+        // DATASET DE OBRAS DE ARTE
+        // ==========================================
+        const artworks = [
+            {
+                id: 1,
+                title: "Sinfonía Etérea",
+                category: "Pinturas",
+                year: "2025",
+                technique: "Óleo y pigmentos naturales sobre lienzo",
+                dimensions: "150 x 120 cm",
+                description: "Una exploración profunda sobre la vibración del color y la sonoridad invisible del viento sobre superficies marinas.",
+                image: "https://images.unsplash.com/photo-1579783902614-a3fb3927b675?auto=format&fit=crop&w=1000&q=80",
+                favorite: false
+            },
+            {
+                id: 2,
+                title: "Fragmentos Neón",
+                category: "Ilustración Digital",
+                year: "2024",
+                technique: "Pintura Digital en 3D / Render vectorial",
+                dimensions: "Edición Limitada 4K (80 x 80 cm)",
+                description: "Representación futurista de la identidad urbana y la superposición de datos en la era contemporánea.",
+                image: "https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?auto=format&fit=crop&w=1000&q=80",
+                favorite: false
+            },
+            {
+                id: 3,
+                title: "Geometría del Silencio",
+                category: "Esculturas",
+                year: "2024",
+                technique: "Escultura en mármol blanco y bronce pátina",
+                dimensions: "45 x 30 x 25 cm",
+                description: "Masa escultórica minimalista que busca reflejar el peso de la calma en espacios de arquitectura brutalista.",
+                image: "https://images.unsplash.com/photo-1544717297-fa95b6ee9643?auto=format&fit=crop&w=1000&q=80",
+                favorite: false
+            },
+            {
+                id: 4,
+                title: "Sombras Someras",
+                category: "Fotografía",
+                year: "2025",
+                technique: "Fotografía analógica impresiones en papel baritado",
+                dimensions: "100 x 70 cm",
+                description: "Captura de sombras en movimiento en las calles medievales de Girona en un amanecer nublado.",
+                image: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=1000&q=80",
+                favorite: false
+            },
+            {
+                id: 5,
+                title: "Atardecer Carmesí",
+                category: "Pinturas",
+                year: "2023",
+                technique: "Acrílico y textura con espátula sobre madera",
+                dimensions: "100 x 100 cm",
+                description: "Estudio sobre los reflejos cálidos de la luz crepuscular en horizontes abiertos.",
+                image: "https://images.unsplash.com/photo-1541701494587-cb58502866ab?auto=format&fit=crop&w=1000&q=80",
+                favorite: false
+            },
+            {
+                id: 6,
+                title: "Universo Paralelo",
+                category: "Ilustración Digital",
+                year: "2025",
+                technique: "Ilustración Vectorial & Matte Painting",
+                dimensions: "Impresión Giclée (120 x 80 cm)",
+                description: "Un viaje surrealista a través de paisajes fractales e imprevistos atardeceres de ciencia ficción.",
+                image: "https://images.unsplash.com/photo-1634017839464-5c339ebe3cb4?auto=format&fit=crop&w=1000&q=80",
+                favorite: false
+            },
+            {
+                id: 7,
+                title: "Fluidez Mineral",
+                category: "Esculturas",
+                year: "2023",
+                technique: "Cerámica gres esmaltada a alta temperatura",
+                dimensions: "60 x 40 x 35 cm",
+                description: "Líneas orgánicas que evocan el flujo ininterrumpido del agua esculpiendo la roca.",
+                image: "https://images.unsplash.com/photo-1561839561-b13bcfe95249?auto=format&fit=crop&w=1000&q=80",
+                favorite: false
+            },
+            {
+                id: 8,
+                title: "Geometría Urbana",
+                category: "Fotografía",
+                year: "2024",
+                technique: "Fotografía Digital en Blanco y Negro",
+                dimensions: "90 x 60 cm",
+                description: "Contraste dramático de luces y sombras en patrones de arquitectura moderna.",
+                image: "https://images.unsplash.com/photo-1513694203232-719a280e022f?auto=format&fit=crop&w=1000&q=80",
+                favorite: false
+            }
+        ];
+
+        // Estado global
+        let selectedCategory = 'all';
+        let searchQuery = '';
+        let activeModalArtwork = null;
+
+        // ==========================================
+        // GESTIÓN DEL MODO CLARO / OSCURO
+        // ==========================================
+        const themeToggleDarkIcon = document.getElementById('theme-toggle-dark-icon');
+        const themeToggleLightIcon = document.getElementById('theme-toggle-light-icon');
+        const themeToggleBtn = document.getElementById('theme-toggle');
+
+        function initTheme() {
+            if (localStorage.getItem('color-theme') === 'light' || 
+               (!('color-theme' in localStorage) && window.matchMedia('(prefers-color-scheme: light)').matches)) {
+                document.documentElement.classList.remove('dark');
+                themeToggleDarkIcon.classList.remove('hidden');
+                themeToggleLightIcon.classList.add('hidden');
+            } else {
+                document.documentElement.classList.add('dark');
+                themeToggleLightIcon.classList.remove('hidden');
+                themeToggleDarkIcon.classList.add('hidden');
+            }
+        }
+
+        themeToggleBtn.addEventListener('click', function() {
+            themeToggleDarkIcon.classList.toggle('hidden');
+            themeToggleLightIcon.classList.toggle('hidden');
+
+            if (document.documentElement.classList.contains('dark')) {
+                document.documentElement.classList.remove('dark');
+                localStorage.setItem('color-theme', 'light');
+            } else {
+                document.documentElement.classList.add('dark');
+                localStorage.setItem('color-theme', 'dark');
+            }
+        });
+
+        // ==========================================
+        // RENDERIZADO DE LA GALERÍA & FILTROS
+        // ==========================================
+        const galleryGrid = document.getElementById('gallery-grid');
+        const noResults = document.getElementById('no-results');
+
+        function renderGallery() {
+            const filtered = artworks.filter(art => {
+                const matchesCategory = selectedCategory === 'all' || art.category === selectedCategory;
+                const matchesSearch = art.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+                                      art.category.toLowerCase().includes(searchQuery.toLowerCase()) ||
+                                      art.technique.toLowerCase().includes(searchQuery.toLowerCase());
+                return matchesCategory && matchesSearch;
+            });
+
+            galleryGrid.innerHTML = '';
+
+            if (filtered.length === 0) {
+                noResults.classList.remove('hidden');
+            } else {
+                noResults.classList.add('hidden');
+                filtered.forEach(art => {
+                    const card = document.createElement('div');
+                    card.className = "group relative bg-stone-100 dark:bg-zinc-900 rounded-2xl overflow-hidden border border-stone-200 dark:border-zinc-800 shadow-md hover:shadow-2xl transition-all duration-300 flex flex-col justify-between";
+                    
+                    card.innerHTML = `
+                        <div class="relative overflow-hidden aspect-square bg-stone-200 dark:bg-zinc-800 cursor-pointer" onclick="openModal(${art.id})">
+                            <img src="${art.image}" alt="${art.title}" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700 ease-out">
+                            <div class="absolute inset-0 bg-zinc-950/40 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center">
+                                <span class="px-4 py-2 bg-stone-50/90 dark:bg-zinc-900/90 text-zinc-900 dark:text-stone-100 rounded-full text-xs font-semibold shadow-lg transform translate-y-4 group-hover:translate-y-0 transition-transform">
+                                    Ver Detalles <i class="fas fa-expand ml-1"></i>
+                                </span>
+                            </div>
+                            <button onclick="event.stopPropagation(); toggleFavorite(${art.id})" aria-label="Marcar Favorito" class="absolute top-3 right-3 z-10 w-9 h-9 rounded-full bg-stone-900/50 hover:bg-stone-900 text-white backdrop-blur-sm flex items-center justify-center transition-colors">
+                                <i class="${art.favorite ? 'fas text-red-500' : 'far'} fa-heart"></i>
+                            </button>
+                        </div>
+                        <div class="p-5 flex flex-col justify-between flex-grow">
+                            <div>
+                                <div class="flex items-center justify-between text-xs text-stone-500 mb-2">
+                                    <span class="font-semibold text-amber-600 dark:text-amber-400 uppercase tracking-wider">${art.category}</span>
+                                    <span>${art.year}</span>
+                                </div>
+                                <h3 class="font-serif text-lg font-bold text-zinc-900 dark:text-stone-100 group-hover:text-amber-500 transition-colors cursor-pointer" onclick="openModal(${art.id})">
+                                    ${art.title}
+                                </h3>
+                            </div>
+                        </div>
+                    `;
+                    galleryGrid.appendChild(card);
+                });
+            }
+        }
+
+        // Filtros por Categoría
+        document.querySelectorAll('.filter-btn').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                document.querySelectorAll('.filter-btn').forEach(b => {
+                    b.classList.remove('active', 'bg-zinc-900', 'text-white', 'dark:bg-stone-100', 'dark:text-zinc-900');
+                    b.classList.add('bg-stone-200', 'text-stone-700', 'dark:bg-zinc-800', 'dark:text-stone-300');
+                });
+
+                e.target.classList.add('active', 'bg-zinc-900', 'text-white', 'dark:bg-stone-100', 'dark:text-zinc-900');
+                e.target.classList.remove('bg-stone-200', 'text-stone-700', 'dark:bg-zinc-800', 'dark:text-stone-300');
+
+                selectedCategory = e.target.getAttribute('data-category');
+                renderGallery();
+            });
+        });
+
+        // Buscador en tiempo real
+        document.getElementById('search-input').addEventListener('input', (e) => {
+            searchQuery = e.target.value;
+            renderGallery();
+        });
+
+        // Toggle Favoritos
+        function toggleFavorite(id) {
+            const art = artworks.find(a => a.id === id);
+            if (art) {
+                art.favorite = !art.favorite;
+                renderGallery();
+                showToast(art.favorite ? `"${art.title}" guardada en favoritos.` : `"${art.title}" removida de favoritos.`, 'fa-heart');
+            }
+        }
+
+        // ==========================================
+        // VISOR MODAL (LIGHTBOX)
+        // ==========================================
+        const modal = document.getElementById('art-modal');
+        const modalContainer = document.getElementById('modal-container');
+        const modalImage = document.getElementById('modal-image');
+        const modalTitle = document.getElementById('modal-title');
+        const modalCategory = document.getElementById('modal-category');
+        const modalYear = document.getElementById('modal-year');
+        const modalTechnique = document.getElementById('modal-technique');
+        const modalDimensions = document.getElementById('modal-dimensions');
+        const modalDescription = document.getElementById('modal-description');
+        const modalClose = document.getElementById('modal-close');
+        const modalFavBtn = document.getElementById('modal-fav-btn');
+        const modalInquireBtn = document.getElementById('modal-inquire-btn');
+
+        function openModal(id) {
+            const art = artworks.find(a => a.id === id);
+            if (!art) return;
+
+            activeModalArtwork = art;
+            modalImage.src = art.image;
+            modalImage.alt = art.title;
+            modalTitle.textContent = art.title;
+            modalCategory.textContent = art.category;
+            modalYear.textContent = art.year;
+            modalTechnique.textContent = art.technique;
+            modalDimensions.textContent = art.dimensions;
+            modalDescription.textContent = art.description;
+
+            updateModalFavIcon();
+
+            modal.classList.remove('hidden');
+            setTimeout(() => {
+                modal.classList.remove('opacity-0');
+                modalContainer.classList.remove('scale-95');
+                modalContainer.classList.add('scale-100');
+            }, 10);
+
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeModal() {
+            modal.classList.add('opacity-0');
+            modalContainer.classList.remove('scale-100');
+            modalContainer.classList.add('scale-95');
+            setTimeout(() => {
+                modal.classList.add('hidden');
+                document.body.style.overflow = 'auto';
+            }, 300);
+        }
+
+        function updateModalFavIcon() {
+            if (activeModalArtwork) {
+                modalFavBtn.innerHTML = activeModalArtwork.favorite 
+                    ? `<i class="fas fa-heart text-lg text-red-500"></i>` 
+                    : `<i class="far fa-heart text-lg"></i>`;
+            }
+        }
+
+        modalClose.addEventListener('click', closeModal);
+        modal.addEventListener('click', (e) => {
+            if (e.target === modal) closeModal();
+        });
+
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape' && !modal.classList.contains('hidden')) {
+                closeModal();
+            }
+        });
+
+        modalFavBtn.addEventListener('click', () => {
+            if (activeModalArtwork) {
+                toggleFavorite(activeModalArtwork.id);
+                updateModalFavIcon();
+            }
+        });
+
+        modalInquireBtn.addEventListener('click', () => {
+            if (activeModalArtwork) {
+                closeModal();
+                const asuntoInput = document.getElementById('asunto');
+                if (asuntoInput) {
+                    asuntoInput.value = `Consulta sobre la obra: "${activeModalArtwork.title}"`;
+                }
+                const contactoSec = document.getElementById('contacto');
+                contactoSec.scrollIntoView({ behavior: 'smooth' });
+            }
+        });
+
+        // ==========================================
+        // NOTIFICACIONES TOAST & FORMULARIO
+        // ==========================================
+        function showToast(message, iconClass = 'fa-check-circle') {
+            const toast = document.getElementById('toast');
+            const toastMsg = document.getElementById('toast-msg');
+            const toastIcon = document.getElementById('toast-icon');
+
+            toastMsg.textContent = message;
+            toastIcon.className = `fas ${iconClass} text-amber-500`;
+
+            toast.classList.remove('translate-y-20', 'opacity-0');
+            toast.classList.add('translate-y-0', 'opacity-100');
+
+            setTimeout(() => {
+                toast.classList.remove('translate-y-0', 'opacity-100');
+                toast.classList.add('translate-y-20', 'opacity-0');
+            }, 3500);
+        }
+
+        document.getElementById('contact-form').addEventListener('submit', (e) => {
+            e.preventDefault();
+            showToast('¡Gracias por tu mensaje! Me pondré en contacto pronto.', 'fa-paper-plane');
+            e.target.reset();
+        });
+
+        // MENÚ MÓVIL Y SMOOTH SCROLL
+        const mobileMenuBtn = document.getElementById('mobile-menu-btn');
+        const mobileMenu = document.getElementById('mobile-menu');
+
+        mobileMenuBtn.addEventListener('click', () => {
+            mobileMenu.classList.toggle('hidden');
+        });
+
+        document.querySelectorAll('.mobile-link').forEach(link => {
+            link.addEventListener('click', () => {
+                mobileMenu.classList.add('hidden');
+            });
+        });
+
+        // BOTÓN VOLVER ARRIBA
+        document.getElementById('scroll-to-top').addEventListener('click', () => {
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        });
+
+        // INICIALIZACIÓN
+        window.addEventListener('DOMContentLoaded', () => {
+            initTheme();
+            renderGallery();
+        });
+    </script>
+</body>
+</html>
